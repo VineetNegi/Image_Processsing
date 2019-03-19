@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 '''
--> GET_PORES
-Description:
+codebname: GET_PORES
+Description: This code reads in a Black&White image and detects the pores (white regions) in the image.
+The codes uses a variantion of Breadth-First graph search algorithm, where neighbors of a graph-vertex (pixel)
+are added to two separates queues - a queue for black pixels, and a queue for white pixels. The white pixels
+queue is given the priority while processing. Whenever, the white pixel queue goes empty a pore is detected. 
+The pore pixels are the processed white pixels when the white pixel's queue become empty. The time complexity
+of the code is therefore O(N), where N is the total number of pixels in the image.
 
-This code reads in a Black&White image and detects the pores in the image
-
+created by - VN
+(3/15/2019)
 '''
 
 # Import modules
@@ -13,7 +18,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import matplotlib.cm as cmx
-import scipy.io as sio
 
 #define global functions
     
@@ -30,7 +34,7 @@ def print_bw_image(bwimg):
     
 def get_adjncy_list(loc, img):
     '''
-    This code finds the location of pixel adjacent to 'loc' in 'img'
+    This function finds the location of pixel adjacent to 'loc' pixel in image 'img'
     '''
     sx, sy = img.shape
     neighbors = []
@@ -46,8 +50,8 @@ def get_adjncy_list(loc, img):
     
 def get_pores(bw):
     '''
-    This code processes the black & white image to get the 
-    no. and size of pores in the image
+    This function processes the black & white image to get the 
+    numbers and sizes of pores in the image
     '''
     
     "define relevant data structures"
@@ -144,11 +148,13 @@ def get_pores(bw):
 
 def threshold_pores(bw, pores, size_threshold = 0):
     '''
-    This code goes over the pores as fills small pores
+    This function goes over the pores list and deletes pores of size (measured in no. of pixels)
+    smaller than a certain threshold. It also fills the regions in the black&white image 'bw'
+    corresponsing to small pores (size < size_threshold)
     '''
     final_pores = []
     for pore in pores:
-        if(len(pore) < size_threshold):
+        if(len(pore) < size_threshold): #len(pore) = number of pixels in the pore
             for loc in pore:
                 i, j = loc
                 "fill the small pores"
@@ -213,11 +219,4 @@ pores = threshold_pores(bw, pores[:], pore_size_threshold)
 
 #plot an RGB representation of pores
 plot_pores(bw, pores)
-
-#get pore sizes
-pore_sizes = [ len(item) for item in pores]
-pore_area = pixel_size*np.array(pore_sizes)
-fig = plt.figure(2)
-bins = np.linspace(0.0, 1500.0, 151)
-h = plt.hist(pore_area, bins=bins, normed=True)
-sio.savemat('I8_pore_areas', mdict={'I8_pore_area':pore_area})
+##############################################################################
