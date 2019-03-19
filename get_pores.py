@@ -200,18 +200,16 @@ def plot_pores(bw, pores):
     
     
 ############################### MAIN SCRIPT ###################################
-# enter the pixel_size in terms of micrometer^2
-pixel_size = 1.35**2
 
 # Read the BW image
 img = mpimg.imread('I8_bw.png')
 
 #convert the image to binary
-#bw = img[:,:,0]
-bw = img[:,:]
+#bw = img[:,:,0] # If the image entered is in RGB format
+bw = img[:,:] # If the image is in 2D array format
 
 #detect the pores
-pores = get_pores(bw)
+pores = get_pores(bw) # THIS IS THE MAIN FUNCTION
 
 #delete the small pores
 pore_size_threshold = 20 #atleast this size 
